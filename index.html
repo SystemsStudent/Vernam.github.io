@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cifrado y Descifrado con Vernam</title>
+</head>
+<body>
+<h1>Cifrado y Descifrado con Vernam</h1>
+<div>
+  <h2>Texto a cifrar</h2>
+  <div>
+    <label for="encryptionKey">Clave (7 caracteres):</label>
+    <input type="text" id="encryptionKey" maxlength="7">
+  </div>
+  <div>
+    <label for="plainText">Texto claro_(Todo junto):</label>
+    <textarea id="plainText" rows="4" cols="50"></textarea>
+  </div>
+  <button onclick="encrypt()">Cifrar</button>
+  <div>
+    <p>Texto Traspuesto: <span id="transposedText"></span></p>
+    <p>Texto Desplazado: <span id="shiftedText"></span></p>
+    <p>Texto Cifrado: <span id="encryptedText"></span></p>
+  </div>
+</div>
+<hr>
+<div>
+  <h2>Texto para Descifrar</h2>
+  <div>
+    <label for="decryptionKey">Clave (7 caracteres):</label>
+    <input type="text" id="decryptionKey" maxlength="7">
+  </div>
+  <div>
+    <label for="cipherText">Texto cifrado:</label>
+    <textarea id="cipherText" rows="4" cols="50"></textarea>
+  </div>
+  <button onclick="decrypt()">Descifrar</button>
+  <div>
+    <p>Texto claro: <span id="decryptedText"></span></p>
+  </div>
+</div>
+<p>Name:<p>Francisco Dario Rodriguez Samayoa_____2690-19-20131</p></p>
+<script>
+function encrypt() {
+  const encryptionKey = document.getElementById("encryptionKey").value;
+  const plainText = document.getElementById("plainText").value;
+
+  if (encryptionKey.length !== 7) {
+    alert("La clave debe tener 7 caracteres.");
+    return;
+  }
+  let transposedText = "";
+  for (let i = 0; i < plainText.length; i += 7) {
+    for (let j = 0; j < 7; j++) {
+      transposedText += plainText[i + j] || " ";
+    }
+  }
+  document.getElementById("transposedText").textContent = transposedText;
+  const shiftedText = transposedText.slice(7) + transposedText.slice(0, 7);
+  document.getElementById("shiftedText").textContent = shiftedText;
+
+  let encryptedText = "";
+  for (let i = 0; i < shiftedText.length; i++) {
+    const charCode = shiftedText.charCodeAt(i) ^ encryptionKey.charCodeAt(i % 7);
+    encryptedText += String.fromCharCode(charCode & 127); 
+  }
+  document.getElementById("encryptedText").textContent = encryptedText;
+}
+
+function decrypt() {
+  const decryptionKey = document.getElementById("decryptionKey").value;
+  const cipherText = document.getElementById("cipherText").value;
+
+  if (decryptionKey.length !== 7) {
+    alert("La clave debe tener 7 caracteres.");
+    return;
+  }
+
+  let decryptedText = "";
+
+ 
+  for (let i = 0; i < cipherText.length; i++) {
+    const charCode = (cipherText.charCodeAt(i) ^ decryptionKey.charCodeAt(i % 7)) & 127;
+    decryptedText += String.fromCharCode(charCode);
+  }
+
+  const shiftedText = decryptedText.slice(-7) + decryptedText.slice(0, -7);
+
+  let transposedText = "";
+  for (let i = 0; i < shiftedText.length; i++) {
+    for (let j = 0; j < 7; j++) {
+      transposedText += shiftedText[i + j] || " ";
+    }
+    i += 6;
+  }
+  document.getElementById("decryptedText").textContent = transposedText;
+}
+</script>
+</body>
+</html>
